@@ -26,6 +26,37 @@ CF_TARGET(clean,
     CF_REMOVE("build/");
 }
 
+CF_TARGET(insert,
+    CF_HELP_STRING("Insert kernel module"),
+    CF_DEPENDS(remove),
+    CF_DEPENDS(kmod)
+) {
+    printf(KO_TAG "Inserting module: %s\n", KMOD_NAME);
+    CF_RUN("sudo insmod build/%s", KMOD_NAME);
+}
+
+CF_TARGET(remove,
+    CF_HELP_STRING("Remove kernel module")
+) {
+    const char* lsmod_log = "build/lsmod.log";
+
+    CF_RUN(
+        "lsmod | grep \"^%s\" > %s || true \"\"",
+        CF_MAP(KMOD_NAME, CF_MAP_EXT("")),
+        lsmod_log
+    );
+    char* ret = CF_READ(lsmod_log);
+    if (ret == NULL) {
+        CF_MKDIR("build");
+        return;
+    }
+
+    if (strlen(ret) != 0) {
+        printf(KO_TAG "Currently inserted: %s", ret);
+        CF_RUN("sudo rmmod %s", KMOD_NAME);
+    }
+}
+
 CF_TARGET(kmod, CF_HELP_STRING("Build the kernel module")) {
     bool rebuild = false;
 
