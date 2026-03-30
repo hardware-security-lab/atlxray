@@ -50,15 +50,16 @@ static void __exit cleanup(void)
 {
     pr_info("%s: unloading...\n", KBUILD_MODNAME);
 
+    if (regfile != NULL)
+    {
+        debugfs_remove(regfile);
+    }
+
     if (root != NULL)
     {
         debugfs_remove(root);
     }
 
-    if (regfile != NULL)
-    {
-        debugfs_remove(regfile);
-    }
     pr_info("%s: unloaded!\n", KBUILD_MODNAME);
 }
 
