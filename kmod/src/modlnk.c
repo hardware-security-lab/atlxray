@@ -5,6 +5,8 @@
 
 #include "umcxray.h"
 
+#include "kmod/uxdevvfs.h"
+
 static struct cb_ops cb_ops = {
     nodev,
     nodev,
@@ -32,8 +34,8 @@ static struct dev_ops dev_ops = {
     nulldev,
     nulldev,
     nulldev,
-    nulldev,
-    nulldev,
+    umcxray_attach,
+    umcxray_detach,
     nodev,
     &cb_ops,
     NULL,
@@ -42,7 +44,7 @@ static struct dev_ops dev_ops = {
 };
 
 static struct modldrv modldrv = {
-    &mod_miscops,
+    &mod_driverops,
     "IllumOS UMC Xray " UMCXRAY_VERSION,
     &dev_ops
 };

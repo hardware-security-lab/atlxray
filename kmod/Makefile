@@ -30,7 +30,11 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 ins:
-	pfexec modload $(TARGET)
+	pfexec cp umcxray.conf /kernel/drv/umcxray.conf
+	pfexec cp $(TARGET) /kernel/drv/amd64/$(MODNAME)
+	pfexec rem_drv $(MODNAME) || true
+	pfexec add_drv -u -m '* 0666 root sys' $(MODNAME)
+	pfexec devfsadm -u
 
 info:
 	@printf "\n"
@@ -40,5 +44,7 @@ info:
 	@printf "\n"
 
 rem:
-	pfexec modunload $(MODNAME)
+	pfexec modunload $(MODNAME) || true
+	pfexec rm /kernel/drv/umcxray.conf || true
+	pfexec rm /kernel/drv/amd64/$(MODNAME)
 
