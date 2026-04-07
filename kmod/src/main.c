@@ -1,7 +1,7 @@
 #include <sys/modctl.h>
 
 #include "umcxray.h"
-#include "uxlog.h"
+#include "kmod/uxlog.h"
 
 extern struct modlinkage umcxray_modlinkage;
 
